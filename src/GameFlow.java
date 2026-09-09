@@ -30,4 +30,13 @@ public class GameFlow {
 
         return null;
     }
+
+    static boolean isBoardFull(JButton[] buttons) {
+        for (JButton button : buttons) {
+            if (button.getText().isEmpty()) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
