@@ -43,5 +43,10 @@ public class Main {
         }
 
         isXTurn = !isXTurn;
+
+        String winner = GameFlow.checkWin(buttons);
+        if (winner != null) {
+            System.out.println(winner + " wins!");
+        }
     }
 }
