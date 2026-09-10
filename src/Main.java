@@ -121,15 +121,21 @@ public class Main {
             return;
         }
 
-        if (isXTurn) {
-            square.setText("X");
-            square.setForeground(xColor);
-        } else {
-            square.setText("O");
-            square.setForeground(oColor);
-        }
+        if (gameMode.equals("player")){
+            //player vs player mode logic
+            if (isXTurn) {
+                square.setText("X");
+                square.setForeground(xColor);
+            } else {
+                square.setText("O");
+                square.setForeground(oColor);
+            }
 
-        isXTurn = !isXTurn;
+            isXTurn = !isXTurn;
+
+        }else {
+            //player vs AI mode logic
+        };
 
         String winner = GameFlow.checkWin(buttons);
         if (winner != null) {
@@ -141,6 +147,7 @@ public class Main {
             statusLabel.setText("It's a draw!");
             playAgainButton.setVisible(true);
         }
+
     }
 
     static void resetBoard() {
