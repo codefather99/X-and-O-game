@@ -172,10 +172,14 @@ public class Main {
             //player vs AI mode logic
         };
 
+
+
         String winner = GameFlow.checkWin(buttons);
+
         if (winner != null) {
             gameOver = true;
-            statusLabel.setText(winner + " wins!");
+            Player winningPlayer = winner.equals(playerX.getMark()) ? playerX : playerO;
+            statusLabel.setText(winningPlayer.getName() + " wins!");
             playAgainButton.setVisible(true);
         } else if (GameFlow.isBoardFull(buttons)) {
             gameOver = true;
