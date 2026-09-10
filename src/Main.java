@@ -141,6 +141,26 @@ public class Main {
             statusLabel.setText("It's a draw!");
             playAgainButton.setVisible(true);
         }
+
+        if (!gameOver && gameMode.equals("computer") && !isXTurn) {
+            javax.swing.Timer timer = new javax.swing.Timer(500, e -> {
+                Computer.makeMove(buttons);
+                isXTurn = !isXTurn;
+
+                String computerWinner = GameFlow.checkWin(buttons);
+                if (computerWinner != null) {
+                    gameOver = true;
+                    statusLabel.setText(computerWinner + " wins!");
+                    playAgainButton.setVisible(true);
+                } else if (GameFlow.isBoardFull(buttons)) {
+                    gameOver = true;
+                    statusLabel.setText("It's a draw!");
+                    playAgainButton.setVisible(true);
+                }
+            });
+            timer.setRepeats(false);
+            timer.start();
+        }
     }
 
     static void resetBoard() {
