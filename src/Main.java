@@ -1,9 +1,4 @@
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.BorderFactory;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 import java.awt.GridLayout;
 import java.awt.BorderLayout;
 import java.awt.Font;
@@ -15,6 +10,11 @@ public class Main {
     static boolean isXTurn = true;
     static boolean gameOver = false;
     static String gameMode = "";
+    static Player playerX = new Player("X", "X");
+    static Player playerO = new Player("O", "O");
+    static int XScore = 0;
+    static int OScore = 0;
+    static int scoreDraws = 0;
 
     static JFrame frame;
     static JLabel statusLabel;
@@ -51,12 +51,46 @@ public class Main {
         styleMenuButton(vsPlayerButton);
 
         vsComputerButton.addActionListener(e -> startGame("computer"));
-        vsPlayerButton.addActionListener(e -> startGame("player"));
+        vsPlayerButton.addActionListener(e -> showPlayerSetupScreen());
 
         startPanel.add(vsComputerButton);
         startPanel.add(vsPlayerButton);
 
         frame.add(startPanel, BorderLayout.CENTER);
+    }
+
+    static void showPlayerSetupScreen(){
+
+        frame.getContentPane().removeAll();
+
+        JPanel startPanel = new JPanel();
+        startPanel.setLayout(new GridLayout(4, 1, 10, 10));
+        startPanel.setBackground(backgroundColor);
+        startPanel.setBorder(BorderFactory.createEmptyBorder(80,40,80,40));
+
+        JLabel jlab = new JLabel("Enter the names to be used for players X and O below: ");
+        JTextField inputplayerXName = new JTextField();
+        JTextField inputplayerOName = new JTextField();
+
+        JButton startPVP = new JButton("Start PvP game");
+
+        startPanel.add(jlab);
+        startPanel.add(inputplayerXName);
+        startPanel.add(inputplayerOName);
+        startPanel.add(startPVP);
+
+        playerX.setName(inputplayerXName.getText());
+        playerO.setName(inputplayerOName.getText());
+
+        startPVP.addActionListener(e -> {
+            playerX.setName(inputplayerXName.getText());
+            playerO.setName(inputplayerOName.getText());
+            startGame("player");
+        });
+
+        frame.add(startPanel, BorderLayout.CENTER);
+        frame.revalidate();
+        frame.repaint();
     }
 
     static void styleMenuButton(JButton button) {
@@ -72,7 +106,7 @@ public class Main {
 
         frame.getContentPane().removeAll();
 
-        statusLabel = new JLabel(" ");
+        statusLabel = new JLabel(playerX.getName() + "'s turn");
         statusLabel.setHorizontalAlignment(SwingConstants.CENTER);
         statusLabel.setFont(new Font("Arial", Font.BOLD, 22));
         statusLabel.setForeground(Color.WHITE);
@@ -121,20 +155,31 @@ public class Main {
             return;
         }
 
-        if (isXTurn) {
-            square.setText("X");
-            square.setForeground(xColor);
-        } else {
-            square.setText("O");
-            square.setForeground(oColor);
-        }
+        if (gameMode.equals("player")){
+            //player vs player mode logic
+            if (isXTurn) {
+                square.setText("X");
+                square.setForeground(xColor);
+            } else {
+                square.setText("O");
+                square.setForeground(oColor);
+            }
 
-        isXTurn = !isXTurn;
+            isXTurn = !isXTurn;
+            statusLabel.setText((isXTurn ? playerX.getName() : playerO.getName()) + "'s turn");
+
+        }else {
+            //player vs AI mode logic
+        };
+
+
 
         String winner = GameFlow.checkWin(buttons);
+
         if (winner != null) {
             gameOver = true;
-            statusLabel.setText(winner + " wins!");
+            Player winningPlayer = winner.equals(playerX.getMark()) ? playerX : playerO;
+            statusLabel.setText(winningPlayer.getName() + " wins!");
             playAgainButton.setVisible(true);
         } else if (GameFlow.isBoardFull(buttons)) {
             gameOver = true;
@@ -142,25 +187,6 @@ public class Main {
             playAgainButton.setVisible(true);
         }
 
-        if (!gameOver && gameMode.equals("computer") && !isXTurn) {
-            javax.swing.Timer timer = new javax.swing.Timer(500, e -> {
-                Computer.makeMove(buttons);
-                isXTurn = !isXTurn;
-
-                String computerWinner = GameFlow.checkWin(buttons);
-                if (computerWinner != null) {
-                    gameOver = true;
-                    statusLabel.setText(computerWinner + " wins!");
-                    playAgainButton.setVisible(true);
-                } else if (GameFlow.isBoardFull(buttons)) {
-                    gameOver = true;
-                    statusLabel.setText("It's a draw!");
-                    playAgainButton.setVisible(true);
-                }
-            });
-            timer.setRepeats(false);
-            timer.start();
-        }
     }
 
     static void resetBoard() {
